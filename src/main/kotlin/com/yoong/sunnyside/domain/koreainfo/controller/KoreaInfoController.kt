@@ -4,6 +4,7 @@ import com.yoong.sunnyside.common.dto.DefaultResponse
 import com.yoong.sunnyside.domain.koreainfo.dto.CreateKoreaInfoRequest
 import com.yoong.sunnyside.domain.koreainfo.dto.KoreaInfoResponse
 import com.yoong.sunnyside.domain.koreainfo.dto.UpdateKoreaInfoRequest
+import com.yoong.sunnyside.domain.koreainfo.service.KoreaInfoService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,14 +20,15 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "한국 정보", description = "한국정보 API")
 @RestController
 @RequestMapping("/kor-info")
-class KoreaInfoController {
+class KoreaInfoController(
+    private val koreaInfoService: KoreaInfoService
+) {
 
     @GetMapping("/{category}/{informationId}")
     fun getKoreaInfo(
-        @PathVariable("informationId") id: Long,
-        @PathVariable("category") category: String,
+        @PathVariable("informationId") informationId: Long,
     ): ResponseEntity<KoreaInfoResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(TODO())
+        return ResponseEntity.status(HttpStatus.OK).body(koreaInfoService.getKoreaInfo(informationId))
     }
 
     @GetMapping
@@ -41,14 +43,14 @@ class KoreaInfoController {
 
     @PutMapping("/{informationId}")
     fun updateKoreaInfo(
-        @PathVariable("informationId") id: Long,
+        @PathVariable("informationId") informationId: Long,
         @RequestBody request: UpdateKoreaInfoRequest
     ): ResponseEntity<DefaultResponse> {
         return ResponseEntity.status(HttpStatus.OK).body(TODO())
     }
 
     @DeleteMapping("/{informationId}")
-    fun deleteKoreaInfo(@PathVariable("informationId") id: Long): ResponseEntity<DefaultResponse> {
+    fun deleteKoreaInfo(@PathVariable("informationId") informationId: Long): ResponseEntity<DefaultResponse> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(TODO())
     }
 }
