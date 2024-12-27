@@ -1,13 +1,18 @@
 package com.yoong.sunnyside.domain.koreainfo.controller
 
 import com.yoong.sunnyside.common.dto.DefaultResponse
+import com.yoong.sunnyside.common.enum_class.SearchType
 import com.yoong.sunnyside.domain.koreainfo.dto.CreateKoreaInfoRequest
 import com.yoong.sunnyside.domain.koreainfo.dto.KoreaInfoResponse
 import com.yoong.sunnyside.domain.koreainfo.dto.UpdateKoreaInfoRequest
 import com.yoong.sunnyside.domain.koreainfo.service.KoreaInfoService
+import com.yoong.sunnyside.infra.security.MemberPrincipal
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,13 +37,22 @@ class KoreaInfoController(
     }
 
     @GetMapping
-    fun getAllKoreaInfo(): ResponseEntity<List<KoreaInfoResponse>> {
-        return ResponseEntity.status(HttpStatus.OK).body(TODO())
+    fun getAllKoreaInfo(
+        pageable: Pageable,
+        division: String?,
+        searchType: SearchType?,
+        keyword: String?
+    ): ResponseEntity<Page<KoreaInfoResponse>> {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(koreaInfoService.getKoreaInfoPage(pageable, division, searchType, keyword))
     }
 
     @PostMapping
-    fun createKoreaInfo(@RequestBody request: CreateKoreaInfoRequest): ResponseEntity<DefaultResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(TODO())
+    fun createKoreaInfo(
+        @RequestBody request: CreateKoreaInfoRequest,
+        @AuthenticationPrincipal admin: MemberPrincipal
+    ): ResponseEntity<DefaultResponse> {
+        return ResponseEntity.status(HttpStatus.CREATED).body(koreaInfoService.createKoreaInfo(request, admin.id))
     }
 
     @PutMapping("/{informationId}")
@@ -46,11 +60,11 @@ class KoreaInfoController(
         @PathVariable("informationId") informationId: Long,
         @RequestBody request: UpdateKoreaInfoRequest
     ): ResponseEntity<DefaultResponse> {
-        return ResponseEntity.status(HttpStatus.OK).body(TODO())
+        return ResponseEntity.status(HttpStatus.OK).body(koreaInfoService.updateKoreaInfo(informationId, request))
     }
 
     @DeleteMapping("/{informationId}")
     fun deleteKoreaInfo(@PathVariable("informationId") informationId: Long): ResponseEntity<DefaultResponse> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(TODO())
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(koreaInfoService.deleteKoreaInfo(informationId))
     }
 }

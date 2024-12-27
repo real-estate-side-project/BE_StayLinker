@@ -1,6 +1,7 @@
 package com.yoong.sunnyside.domain.koreainfo.service
 
 import com.yoong.sunnyside.common.dto.DefaultResponse
+import com.yoong.sunnyside.common.enum_class.SearchType
 import com.yoong.sunnyside.common.exception.ModelNotFoundException
 import com.yoong.sunnyside.domain.koreainfo.dto.CreateKoreaInfoRequest
 import com.yoong.sunnyside.domain.koreainfo.dto.KoreaInfoResponse
@@ -47,7 +48,12 @@ class KoreaInfoService(
         return KoreaInfoResponse.from(koreaInfo)
     }
 
-    fun getKoreaInfoPage(title: String?, pageable: Pageable): Page<KoreaInfoResponse> {
-        return TODO()
+    fun getKoreaInfoPage(
+        pageable: Pageable,
+        division: String?,
+        searchType: SearchType?,
+        keyword: String?
+    ): Page<KoreaInfoResponse> {
+        return koreaInfoRepository.findPage(pageable, division, searchType, keyword).map { KoreaInfoResponse.from(it) }
     }
 }
