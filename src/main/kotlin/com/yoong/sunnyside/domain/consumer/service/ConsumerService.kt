@@ -4,13 +4,11 @@ import com.yoong.sunnyside.common.dto.DefaultResponse
 import com.yoong.sunnyside.common.exception.CustomIllegalArgumentException
 import com.yoong.sunnyside.common.exception.ModelNotFoundException
 import com.yoong.sunnyside.domain.business.dto.LoginResponse
-import com.yoong.sunnyside.domain.consumer.dto.ConsumerLoginRequest
-import com.yoong.sunnyside.domain.consumer.dto.ConsumerSignupRequest
-import com.yoong.sunnyside.domain.consumer.dto.ConsumerUpdateRequest
-import com.yoong.sunnyside.domain.consumer.dto.PasswordRequest
+import com.yoong.sunnyside.domain.consumer.dto.*
 import com.yoong.sunnyside.domain.consumer.entity.TempConsumer
 import com.yoong.sunnyside.domain.consumer.repository.ConsumerRepository
 import com.yoong.sunnyside.infra.redis.RedisUtils
+import com.yoong.sunnyside.infra.security.MemberPrincipal
 import com.yoong.sunnyside.infra.security.config.PasswordEncoderConfig
 import com.yoong.sunnyside.infra.security.jwt.JwtHelper
 import jakarta.transaction.Transactional
@@ -85,4 +83,14 @@ class ConsumerService(
 
         consumer.changePassword(passwordEncoder.encode(password))
     }
+
+
+    fun verifyAlienRegistrationCardByString(principal: MemberPrincipal, alienRegistrationCardRequest: AlienRegistrationCardRequest): DefaultResponse{
+        TODO()
+    }
+
+    fun verifyAlienRegistrationCardByImage(principal: MemberPrincipal, alienRegistrationCardRequest: AlienRegistrationCardRequest): DefaultResponse{
+        TODO()
+    }
+
 }

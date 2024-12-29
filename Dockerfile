@@ -14,9 +14,7 @@ WORKDIR /app
 COPY gradlew gradlew
 COPY gradle/ gradle/
 
-COPY . .
-
-COPY src/main/kotlin /app
+COPY . /app
 
 RUN dos2unix gradlew && chmod +x gradlew
 
