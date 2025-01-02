@@ -1,6 +1,7 @@
 package com.yoong.sunnyside.domain.faq.entity
 
 import com.yoong.sunnyside.domain.faq.dto.CreateFaqRequest
+import com.yoong.sunnyside.domain.faq.dto.UpdateFaqRequest
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -24,6 +25,16 @@ class Faq(
         answer = request.answer,
         division = request.division
     )
+
+
+    fun update(request: UpdateFaqRequest) {
+        question = request.question
+        answer = request.answer
+    }
+
+    fun delete() {
+        deletedAt = LocalDateTime.now()
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
