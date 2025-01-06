@@ -61,22 +61,13 @@ class ConsumerController(
             = ResponseEntity.status(HttpStatus.OK).body(consumerService.deleteConsumer(principal.id))
 
     @Operation(summary = "외국인 등록증 진위 여부 확인 (외국인 등록 번호)")
-    @PreAuthorize("hasRole('CONSUMER')")
-    @PostMapping("/signup")
+//    @PreAuthorize("hasRole('CONSUMER')")
+    @PostMapping("/alien-registration-card")
     fun verifyAlienRegistrationCardByString(
-        @AuthenticationPrincipal principal: MemberPrincipal,
+//        @AuthenticationPrincipal principal: MemberPrincipal,
         @RequestBody alienRegistrationCardRequest: AlienRegistrationCardRequest
     ):ResponseEntity<DefaultResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(consumerService.verifyAlienRegistrationCardByString(principal, alienRegistrationCardRequest))
-
-    @Operation(summary = "외국인 등록증 진위 여부 확인 (외국인 등록증)")
-    @PreAuthorize("hasRole('CONSUMER')")
-    @PostMapping("/signup")
-    fun verifyAlienRegistrationCardByImage(
-        @AuthenticationPrincipal principal: MemberPrincipal,
-        @RequestBody alienRegistrationCardRequest: AlienRegistrationCardRequest
-    ):ResponseEntity<DefaultResponse> =
-        ResponseEntity.status(HttpStatus.OK).body(consumerService.verifyAlienRegistrationCardByImage(principal, alienRegistrationCardRequest))
+        ResponseEntity.status(HttpStatus.OK).body(consumerService.verifyAlienRegistrationCardByString(alienRegistrationCardRequest))
 
 
 }

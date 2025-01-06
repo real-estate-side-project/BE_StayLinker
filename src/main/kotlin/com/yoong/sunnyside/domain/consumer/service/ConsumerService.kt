@@ -11,6 +11,7 @@ import com.yoong.sunnyside.infra.redis.RedisUtils
 import com.yoong.sunnyside.infra.security.MemberPrincipal
 import com.yoong.sunnyside.infra.security.config.PasswordEncoderConfig
 import com.yoong.sunnyside.infra.security.jwt.JwtHelper
+import com.yoong.sunnyside.infra.web_client.hikorea.HiKoreaClient
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -19,7 +20,8 @@ class ConsumerService(
     private val consumerRepository: ConsumerRepository,
     private val passwordEncoderConfig: PasswordEncoderConfig,
     private val jwtHelper: JwtHelper,
-    private val redisUtils: RedisUtils
+    private val redisUtils: RedisUtils,
+    private val hiKoreaClient: HiKoreaClient
 ){
 
     private val passwordEncoder = passwordEncoderConfig.passwordEncoder()
@@ -85,8 +87,13 @@ class ConsumerService(
     }
 
 
-    fun verifyAlienRegistrationCardByString(principal: MemberPrincipal, alienRegistrationCardRequest: AlienRegistrationCardRequest): DefaultResponse{
-        TODO()
+    fun verifyAlienRegistrationCardByString(alienRegistrationCardRequest: AlienRegistrationCardRequest): DefaultResponse{
+
+        val apiResult = hiKoreaClient.request(alienRegistrationCardRequest)
+
+
+        return DefaultResponse(apiResult)
+
     }
 
     fun verifyAlienRegistrationCardByImage(principal: MemberPrincipal, alienRegistrationCardRequest: AlienRegistrationCardRequest): DefaultResponse{
