@@ -19,6 +19,7 @@ class WebClientConfig(
             .baseUrl("https://datahub-dev.scraping.co.kr")
             .defaultHeaders{
                 it.add(HttpHeaders.CONTENT_TYPE, "application/json")
+                it.add(HttpHeaders.ACCEPT_CHARSET, "utf-8")
                 it.add("Authorization", "Token $token")
             }.build()
     }
