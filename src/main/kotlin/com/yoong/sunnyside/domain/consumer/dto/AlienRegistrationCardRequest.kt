@@ -11,12 +11,8 @@ data class AlienRegistrationCardRequest(
     val serialNumber: String,
 ){
 
-    fun toEncrypt(): AlienRegistrationCardRequest {
-        return AlienRegistrationCardRequest(
-            foreignJumin = Base64.getEncoder().encodeToString(this.foreignJumin.toByteArray()),
-            issueDate = Base64.getEncoder().encodeToString(this.issueDate.toByteArray()),
-            serialNumber = Base64.getEncoder().encodeToString(this.serialNumber.toByteArray()),
-        )
+    fun toSerialNumberEncrypt(): String {
+        return Base64.getEncoder().encodeToString(this.serialNumber.toByteArray())
     }
 
     fun toForeignJiminEncrypt(): String{
