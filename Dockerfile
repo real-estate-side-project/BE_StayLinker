@@ -14,7 +14,7 @@ WORKDIR /app
 COPY gradlew gradlew
 COPY gradle/ gradle/
 
-COPY . /app
+COPY . .
 
 RUN dos2unix gradlew && chmod +x gradlew
 
