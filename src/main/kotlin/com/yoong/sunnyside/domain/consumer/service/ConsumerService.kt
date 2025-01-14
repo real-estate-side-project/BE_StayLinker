@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service
 @Service
 class ConsumerService(
     private val consumerRepository: ConsumerRepository,
-    private val tempConsumerJpaRepository: TempConsumerJpaRepository,
     private val passwordEncoderConfig: PasswordEncoderConfig,
     private val jwtHelper: JwtHelper,
     private val redisUtils: RedisUtils,
@@ -97,7 +96,7 @@ class ConsumerService(
     }
 
     @Transactional
-    fun verifyAlienRegistrationCardByString(alienRegistrationCardRequest: AlienRegistrationCardRequest): DefaultResponse{
+    fun verifyAlienRegistrationCardByString(alienRegistrationCardRequest: AlienRegistrationCardRequest, id: Long): DefaultResponse{
 
         val apiResult = hiKoreaClient.request(alienRegistrationCardRequest)
 
@@ -112,9 +111,9 @@ class ConsumerService(
 
         if(apiData["REGCHECKYN"].toString() != "Y") throw AccessDeniedException("외국인 등록 정보가 일치하지 않습니다")
 
-//        val tempConsumer = tempConsumerJpaRepository.findByIdOrNull(id) ?: throw ModelNotFoundException("해당 유저가 존재하지 않습니다")
-//
-//        consumerRepository.save(Consumer(alienRegistrationCardRequest, tempConsumer))
+        val tempConsumer = consumerRepository.tempUserFindByIdOrNull(id) ?: throw ModelNotFoundException("해당 유저가 존재하지 않습니다")
+
+        consumerRepository.save(Consumer(alienRegistrationCardRequest, tempConsumer))
 
         return DefaultResponse(apiData["REGCHECKYN"].toString())
 

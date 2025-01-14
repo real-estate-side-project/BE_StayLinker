@@ -4,49 +4,64 @@ import com.yoong.sunnyside.infra.encrypt.Encrypt
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.nio.charset.Charset
+import java.security.spec.AlgorithmParameterSpec
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import kotlin.math.log
 
 @Component
 class AESUtil(
     @Value("\${encrypt.key}") private val key : String,
     @Value("\${encrypt.iv}") private val iv : String,
     @Value("\${encrypt.transformation}") private val transformation: String,
+    @Value("\${encrypt.bitKeyType}") private val bitKeyType: Int,
+    @Value("\${encrypt.bytesIvLength}") private val bytesIvLength: Int,
 ): Encrypt {
 
     private final val log = LoggerFactory.getLogger("AESUtil")
 
-    private lateinit var secretKeySpec: SecretKeySpec
-    private lateinit var ivParameterSpec: IvParameterSpec
+    private fun getSecretKeySpec(bitKeyType: Int): SecretKeySpec {
+        val bytesKey = key.toByteArray(Charsets.UTF_8)
 
-    init {
-        val encodedKey = key.toByteArray(Charset.forName("UTF-8"))
-        secretKeySpec = SecretKeySpec(encodedKey, "AES")
-        log.info("secretKeySpec: $secretKeySpec")
+        val bitKeySize = bitKeyType / 8
 
-        val encodedIv = iv.toByteArray(Charset.forName("UTF-8"))
-        ivParameterSpec = IvParameterSpec(encodedIv)
-        log.info("iv: $ivParameterSpec")
+        val keyLength = bytesKey.size.coerceAtMost(bitKeySize)
+
+        val adjustedKey = ByteArray(bitKeySize) { 0 }
+
+        bytesKey.copyInto(adjustedKey, destinationOffset = 0, startIndex = 0, endIndex = keyLength)
+
+        return SecretKeySpec(adjustedKey, "AES")
+    }
+
+    private fun getIvSpec(): AlgorithmParameterSpec{
+
+        val bytesIv = iv.toByteArray(Charsets.UTF_8)
+
+        val adjustedIv = ByteArray(16) { 0 }
+
+        val ivLength = bytesIv.size.coerceAtMost(16)
+
+        bytesIv.copyInto(adjustedIv, destinationOffset = 0, startIndex = 0, endIndex = ivLength)
+
+        return IvParameterSpec(adjustedIv)
     }
 
     override fun encrypt(content: String): String {
-
         val cipher = Cipher.getInstance(transformation)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec)
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKeySpec(bitKeyType), getIvSpec())
 
-        val encryptedBytes = cipher.doFinal(content.toByteArray())
+        val encryptedBytes = cipher.doFinal(content.toByteArray(charset("UTF-8")))
 
         return Base64.getEncoder().encodeToString(encryptedBytes)
     }
 
     override fun decrypt(content: String): String {
+        log.info(transformation)
         val cipher = Cipher.getInstance(transformation)
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec)
-        val decodedBytes = cipher.doFinal(Base64.getDecoder().decode(content.toByteArray()))
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKeySpec(bitKeyType), getIvSpec())
+        val decodedBytes = cipher.doFinal(Base64.getDecoder().decode(content))
         return String(decodedBytes)
     }
 }

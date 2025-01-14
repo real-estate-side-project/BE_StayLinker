@@ -1,6 +1,7 @@
 package com.yoong.sunnyside.domain.consumer.entity
 
 import com.yoong.sunnyside.domain.consumer.dto.AlienRegistrationCardRequest
+import com.yoong.sunnyside.domain.consumer.dto.ConsumerSignupRequest
 import com.yoong.sunnyside.domain.consumer.dto.ConsumerUpdateRequest
 import com.yoong.sunnyside.infra.security.MemberRole
 import jakarta.persistence.*
@@ -81,5 +82,18 @@ class Consumer(
         foreignNumber = alienRegistrationCardRequest.toForeignJiminEncrypt(),
         foreignCreateAt = alienRegistrationCardRequest.toIssueDateEncrypt(),
         role = tempConsumer.role
+    )
+
+    //임시 적용
+    constructor(consumerSignupRequest: ConsumerSignupRequest, encodedPassword: String): this (
+        email = consumerSignupRequest.email,
+        password = encodedPassword,
+        address = consumerSignupRequest.address,
+        nickname = consumerSignupRequest.nickname,
+        country = consumerSignupRequest.country,
+        phoneNumber = consumerSignupRequest.phoneNumber,
+        foreignNumber = "",
+        foreignCreateAt = "",
+        role = MemberRole.CONSUMER
     )
 }
