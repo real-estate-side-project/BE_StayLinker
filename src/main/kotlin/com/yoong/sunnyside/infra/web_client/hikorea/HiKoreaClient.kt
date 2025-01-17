@@ -24,14 +24,12 @@ class HiKoreaClient(
         alienRegistrationCardRequestMap["SERIALNUMBER"] = aesUtil.encrypt(alienRegistrationCardRequest.serialNumber)
         log.info(alienRegistrationCardRequestMap.toString())
 
-//        return webClient.connect()
-//            .post()
-//            .uri("/scrap/docInq/hikorea/ForeignerAuthenticity")
-//            .body(BodyInserters.fromValue(alienRegistrationCardRequestMap))
-//            .retrieve()
-//            .bodyToMono(object : ParameterizedTypeReference<Map<String, Any>>() {})
-//            .block() ?: mapOf()
-
-        return mapOf()
+        return webClient.connect()
+            .post()
+            .uri("/scrap/docInq/hikorea/ForeignerAuthenticity")
+            .body(BodyInserters.fromValue(alienRegistrationCardRequestMap))
+            .retrieve()
+            .bodyToMono(object : ParameterizedTypeReference<Map<String, Any>>() {})
+            .block() ?: mapOf()
     }
 }
