@@ -27,7 +27,7 @@ class AuthController(
         bindingResult: BindingResult
     ): ResponseEntity<NicknameResponse>{
 
-        if(bindingResult.hasErrors()) throw
+        if(bindingResult.hasErrors()) throw ValidException(bindingResult.fieldError?.defaultMessage.toString())
 
         return ResponseEntity.status(HttpStatus.OK).body(authService.checkNickname(checkNicknameDto.nickname))
     }
