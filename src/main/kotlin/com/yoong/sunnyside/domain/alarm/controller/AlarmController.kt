@@ -4,8 +4,11 @@ import com.yoong.sunnyside.common.dto.DefaultResponse
 import com.yoong.sunnyside.domain.alarm.dto.response.AlarmResponse
 import com.yoong.sunnyside.domain.alarm.dto.response.SubscribeAlarmResponse
 import com.yoong.sunnyside.domain.alarm.service.AlarmService
+import com.yoong.sunnyside.infra.security.MemberPrincipal
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,14 +17,21 @@ class AlarmController(
     private val alarmService: AlarmService
 ){
 
+    @PreAuthorize("hasRole('CONSUMER') or hasRole('BUSINESS')")
     @GetMapping
-    fun getAlarms(): ResponseEntity<List<AlarmResponse>>
-        = ResponseEntity.status(HttpStatus.OK).body(alarmService.getAlarms())
+    fun getAlarms(
+        @AuthenticationPrincipal memberPrincipal: MemberPrincipal,
+    ): ResponseEntity<List<AlarmResponse>>
+        = ResponseEntity.status(HttpStatus.OK).body(alarmService.getAlarms(memberPrincipal.id))
 
+    @PreAuthorize("hasRole('CONSUMER') or hasRole('BUSINESS')")
     @GetMapping("/unread")
-    fun getUnReadAlarms(): ResponseEntity<List<AlarmResponse>>
-            = ResponseEntity.status(HttpStatus.OK).body(alarmService.getUnReadAlarms())
+    fun getUnReadAlarms(
+        @AuthenticationPrincipal memberPrincipal: MemberPrincipal,
+    ): ResponseEntity<List<AlarmResponse>>
+            = ResponseEntity.status(HttpStatus.OK).body(alarmService.getUnReadAlarms(memberPrincipal.id))
 
+    @PreAuthorize("hasRole('CONSUMER') or hasRole('BUSINESS')")
     @GetMapping("/{alarmId}")
     fun getAlarm(
         @PathVariable alarmId: Long,
@@ -29,6 +39,7 @@ class AlarmController(
             = ResponseEntity.status(HttpStatus.OK).body(alarmService.getAlarm(alarmId))
 
     // 알람 읽음 표시 설정
+    @PreAuthorize("hasRole('CONSUMER') or hasRole('BUSINESS')")
     @PatchMapping("/{alarmId}/read")
     fun readAlarm(
         @PathVariable alarmId: Long,
@@ -36,9 +47,12 @@ class AlarmController(
             = ResponseEntity.status(HttpStatus.OK).body(alarmService.readAlarm(alarmId))
 
     // 알람 전체 읽음 표시 설정
+    @PreAuthorize("hasRole('CONSUMER') or hasRole('BUSINESS')")
     @PatchMapping("/read-all")
-    fun readAllAlarm(): ResponseEntity<DefaultResponse>
-            = ResponseEntity.status(HttpStatus.OK).body(alarmService.readAllAlarm())
+    fun readAllAlarm(
+        @AuthenticationPrincipal memberPrincipal: MemberPrincipal,
+    ): ResponseEntity<DefaultResponse>
+            = ResponseEntity.status(HttpStatus.OK).body(alarmService.readAllAlarm(memberPrincipal.id))
 
     @DeleteMapping("/{alarmId}")
     fun deleteAlarm(

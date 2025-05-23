@@ -20,8 +20,15 @@ class Alarm(
 
     val message: String,
 
-    val isRead: Boolean,
+    var isRead: Boolean,
 ){
+    fun updateRead() {
+       isRead = true
+    }
+
+    fun delete() {
+        deleteAt = LocalDateTime.now()
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +36,6 @@ class Alarm(
 
     @CreationTimestamp
     val createAt: LocalDateTime = LocalDateTime.now()
+
+    var deleteAt: LocalDateTime? = null
 }
