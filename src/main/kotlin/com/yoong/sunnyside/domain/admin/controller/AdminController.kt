@@ -9,6 +9,8 @@ import com.yoong.sunnyside.domain.business.dto.BusinessResponse
 import com.yoong.sunnyside.domain.admin.dto.AdminLoginRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,8 +23,20 @@ class AdminController(
 ) {
     @Operation(summary = "관리자 로그인")
     @PatchMapping("/login")
-    fun login(@RequestBody request: AdminLoginRequest): ResponseEntity<LoginResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.login(request))
+    fun login(
+        @RequestBody request: AdminLoginRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<Any> {
+        val token = adminService.login(request).accessToken
+
+        val cookie = Cookie("accessToken", token).apply {
+            isHttpOnly = true
+            path = "/"
+            maxAge = 60 * 60 * 12
+        }
+
+        response.addCookie(cookie)
+        return ResponseEntity.status(HttpStatus.CREATED).body("로그인되었습니다.")
     }
 
     @Operation(summary = "관리자 회원가입")
